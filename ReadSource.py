@@ -1,3 +1,4 @@
+# https://developers.google.com/sheets/api/quickstart/python
 from __future__ import print_function
 import httplib2
 import os
@@ -13,11 +14,16 @@ try:
 except ImportError:
     flags = None
 
+import boto3
+# how to authenticate https://console.developers.google.com/apis/credentials?project=aqueous-charger-188403
+
+
 # If modifying these scopes, delete your previously saved credentials
 # at ~/.credentials/sheets.googleapis.com-python-quickstart.json
 SCOPES = 'https://www.googleapis.com/auth/spreadsheets.readonly'
-CLIENT_SECRET_FILE = 'client_secret.json'
+CLIENT_SECRET_FILE = '../client_secret.json'
 APPLICATION_NAME = 'Google Sheets API Python Quickstart'
+rangepass="Sheet1!A1:B"
 
 
 def get_credentials():
@@ -48,12 +54,22 @@ def get_credentials():
         print('Storing credentials to ' + credential_path)
     return credentials
 
+def writetoS3()
+	
+
+	s3 = boto3.resource('s3', aws_access_key_id='aws_key', aws_secret_access_key='aws_sec_key')
+	s3.Object('mybucket', 'sample.json').put(Body=open('data.json', 'rb'))
+#key.set_contents_from_string(str) #to PUT your dicts' values directly.
+
+    #See: http://boto.readthedocs.org/en/latest/ref/s3.html#module-boto.s3.key
+
 def main():
     """Shows basic usage of the Sheets API.
 
     Creates a Sheets API service object and prints the names and majors of
     students in a sample spreadsheet:
     https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
+
     """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -62,8 +78,8 @@ def main():
     service = discovery.build('sheets', 'v4', http=http,
                               discoveryServiceUrl=discoveryUrl)
 
-    spreadsheetId = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-    rangeName = 'Class Data!A2:E'
+    spreadsheetId = '1UhiXbpMmP-fAK7r5dX5yPRoAhYuRd0-w9lUrdv0KKps'
+    rangeName = rangepass#'Class Data!A2:E'
     result = service.spreadsheets().values().get(
         spreadsheetId=spreadsheetId, range=rangeName).execute()
     values = result.get('values', [])
@@ -74,7 +90,8 @@ def main():
         print('Name, Major:')
         for row in values:
             # Print columns A and E, which correspond to indices 0 and 4.
-            print('%s, %s' % (row[0], row[4]))
+            print(row)
+            #print('%s, %s' % (row[0], row[4]))
 
 
 if __name__ == '__main__':
